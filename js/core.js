@@ -372,3 +372,48 @@ function internationalize() {
 }
 window.addEventListener("languagechange", internationalize);
 document.addEventListener("DOMContentLoaded", internationalize)
+
+// PWA
+
+const STATIC_CACHE = 'static-cache-v1';
+const DYNAMIC_CACHE = 'dynamic-cache-v1';
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then(cache => {
+      return cache.addAll([
+        '/',                // root
+        './index.html',      // main entry
+        './CNAME',
+        './README.md'
+      ]);
+    })
+  );  
+});
+
+self.addEventListener('fetch', event => {
+  const url = event.request.url;
+  if (
+    url.includes('./images/') ||
+    url.includes('./js/') ||
+    url.includes('./meta/') ||
+    url.includes('./sounds/') ||
+    url.includes('./style/')
+  ) {
+    event.respondWith(
+      caches.open(DYNAMIC_CACHE).then(cache => {
+        return fetch(event.request).then(response => {
+          cache.put(event.request, response.clone());
+          return response;
+        }).catch(() => caches.match(event.request));
+      })
+    );
+  } else {
+    // Default strategy: cache-first with offline fallback
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request).catch(() => caches.match('./index.html'));
+      })
+    );
+  }
+});
