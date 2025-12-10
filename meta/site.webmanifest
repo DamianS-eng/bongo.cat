@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Bongo Cat",
+    "short_name": "bongo.cat",
     "icons": [
         {
             "src": "/meta/android-chrome-192x192.png",
@@ -13,7 +13,10 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#ffcocb",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "display": "fullscreen",
+    "categories": ["games"],
+    "description": "Hit the bongos like Bongo Cat!",
+    "orientation": "natural"
 }
